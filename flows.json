@@ -1,1 +1,1471 @@
-[]
+[
+    {
+        "id": "8743517.3bc76b",
+        "type": "tab",
+        "label": "Tasmota Admin",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "236bb3f3.497d5c",
+        "type": "tab",
+        "label": "Power ingest",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "50fb97c2.2235f8",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "mosquitto",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "compatmode": false,
+        "protocolVersion": "5",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "417ca687.86f458",
+        "type": "influxdb",
+        "hostname": "192.168.1.250",
+        "port": "8086",
+        "protocol": "http",
+        "database": "pow",
+        "name": "",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://influxdb:8086",
+        "timeout": "",
+        "rejectUnauthorized": false
+    },
+    {
+        "id": "a9986583.ec4a08",
+        "type": "debug",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 690,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "358fe222.ad05be",
+        "type": "switch",
+        "z": "8743517.3bc76b",
+        "name": "states",
+        "property": "payload.action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "single",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "long",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "double",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 910,
+        "y": 400,
+        "wires": [
+            [
+                "aeb8bb88cc28b75e"
+            ],
+            [
+                "cc0d42b9.1522f"
+            ],
+            [
+                "2d2d73e0.5c214c"
+            ]
+        ]
+    },
+    {
+        "id": "522f0127.f8fe",
+        "type": "mqtt out",
+        "z": "8743517.3bc76b",
+        "name": "cuarto",
+        "topic": "cmnd/cuarto/POWER",
+        "qos": "",
+        "retain": "",
+        "broker": "50fb97c2.2235f8",
+        "x": 1750,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "cc0d42b9.1522f",
+        "type": "change",
+        "z": "8743517.3bc76b",
+        "name": "OFF",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "OFF",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1110,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2d2d73e0.5c214c",
+        "type": "change",
+        "z": "8743517.3bc76b",
+        "name": "ON",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "ON",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1110,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "15847922.fb0027",
+        "type": "mqtt in",
+        "z": "8743517.3bc76b",
+        "name": "ZbPIRAuxBath",
+        "topic": "tele/zigbeebridge1/PIRAUXBATH/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "inputs": 0,
+        "x": 200,
+        "y": 800,
+        "wires": [
+            [
+                "4f3236fa.fb1998"
+            ]
+        ]
+    },
+    {
+        "id": "4f3236fa.fb1998",
+        "type": "json",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 410,
+        "y": 800,
+        "wires": [
+            [
+                "983df7cf.837288"
+            ]
+        ]
+    },
+    {
+        "id": "983df7cf.837288",
+        "type": "function",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "func": "var state =  msg.payload.ZbReceived.PIRAUXBATH.Occupancy;\nif (state == 1){\n    return {payload:\"ON\"};\n}\nif (state == 0){\n    return {payload:\"OFF\"};\n}\nreturn state;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 820,
+        "y": 800,
+        "wires": [
+            [
+                "9e62e4c5.7dc148",
+                "f01ce3d3.394d9"
+            ]
+        ]
+    },
+    {
+        "id": "9e62e4c5.7dc148",
+        "type": "mqtt out",
+        "z": "8743517.3bc76b",
+        "name": "auxbath",
+        "topic": "cmnd/auxbath/POWER",
+        "qos": "",
+        "retain": "",
+        "broker": "50fb97c2.2235f8",
+        "x": 1760,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "2cbc8bec.6392c4",
+        "type": "mqtt in",
+        "z": "8743517.3bc76b",
+        "name": "ZbMainDoor",
+        "topic": "tele/zigbeebridge1/MAINDOOR/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "inputs": 0,
+        "x": 170,
+        "y": 1280,
+        "wires": [
+            [
+                "5ca110a2.ed16e"
+            ]
+        ]
+    },
+    {
+        "id": "5ca110a2.ed16e",
+        "type": "json",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 330,
+        "y": 1280,
+        "wires": [
+            [
+                "aed607a1.68d5b8"
+            ]
+        ]
+    },
+    {
+        "id": "8672e7af.f441e8",
+        "type": "mqtt in",
+        "z": "8743517.3bc76b",
+        "name": "BTNLivingRoom",
+        "topic": "tele/zigbeebridge1/BTNLivingRoom/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 160,
+        "y": 680,
+        "wires": [
+            [
+                "8642754c.192428"
+            ]
+        ]
+    },
+    {
+        "id": "8642754c.192428",
+        "type": "json",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 330,
+        "y": 680,
+        "wires": [
+            [
+                "1de1e3ee.63ce5c"
+            ]
+        ]
+    },
+    {
+        "id": "1de1e3ee.63ce5c",
+        "type": "function",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "func": "var result = { payload: msg.payload.ZbReceived.BTNLivingRoom };\nif (result.payload.hasOwnProperty(\"0006!00\")){\n  result.payload = 'LONG';\n  return result;\n}\n\nif (result.payload.hasOwnProperty(\"0006!01\")){\n  result.payload = 'DOUBLE';\n  return result;\n}\n\nif (result.payload.hasOwnProperty(\"0006!02\")){\n  result.payload = 'SINGLE';\n  return result;\n}\n\nreturn result;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 680,
+        "wires": [
+            [
+                "a9986583.ec4a08"
+            ]
+        ]
+    },
+    {
+        "id": "15c4d604.0cc3ca",
+        "type": "mqtt out",
+        "z": "8743517.3bc76b",
+        "name": "estudio",
+        "topic": "cmnd/estudio/POWER",
+        "qos": "",
+        "retain": "",
+        "broker": "50fb97c2.2235f8",
+        "x": 1760,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "32c37605.b3cb8a",
+        "type": "inject",
+        "z": "8743517.3bc76b",
+        "name": "new day",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "00 06 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "ON",
+        "payloadType": "msg",
+        "x": 1600,
+        "y": 340,
+        "wires": [
+            [
+                "15c4d604.0cc3ca"
+            ]
+        ]
+    },
+    {
+        "id": "69ed2277.9277cc",
+        "type": "inject",
+        "z": "8743517.3bc76b",
+        "name": "test",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "Mensaje de prueba desde nodered ",
+        "payloadType": "str",
+        "x": 1110,
+        "y": 1200,
+        "wires": [
+            [
+                "94895866.61d638"
+            ]
+        ]
+    },
+    {
+        "id": "aed607a1.68d5b8",
+        "type": "switch",
+        "z": "8743517.3bc76b",
+        "name": "states",
+        "property": "payload.ZbReceived.MAINDOOR.ZoneStatusChange",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 570,
+        "y": 1280,
+        "wires": [
+            [
+                "4ab21047.7726f"
+            ],
+            [
+                "e81fa4af.880988"
+            ]
+        ]
+    },
+    {
+        "id": "e81fa4af.880988",
+        "type": "change",
+        "z": "8743517.3bc76b",
+        "name": "ON",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "ON",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 790,
+        "y": 1300,
+        "wires": [
+            [
+                "1a3cd617.3187aa",
+                "756e9bfc.f23654"
+            ]
+        ]
+    },
+    {
+        "id": "4ab21047.7726f",
+        "type": "change",
+        "z": "8743517.3bc76b",
+        "name": "OFF",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "OFF",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 790,
+        "y": 1260,
+        "wires": [
+            [
+                "458a3eb5.ec884"
+            ]
+        ]
+    },
+    {
+        "id": "458a3eb5.ec884",
+        "type": "change",
+        "z": "8743517.3bc76b",
+        "name": "puerta cerrada",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "puerta cerrada",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1040,
+        "y": 1260,
+        "wires": [
+            [
+                "94895866.61d638"
+            ]
+        ]
+    },
+    {
+        "id": "1a3cd617.3187aa",
+        "type": "change",
+        "z": "8743517.3bc76b",
+        "name": "puerta abierta",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "puerta abierta",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1040,
+        "y": 1300,
+        "wires": [
+            [
+                "94895866.61d638"
+            ]
+        ]
+    },
+    {
+        "id": "94895866.61d638",
+        "type": "function",
+        "z": "8743517.3bc76b",
+        "name": "join",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1250,
+        "y": 1260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "756e9bfc.f23654",
+        "type": "mqtt out",
+        "z": "8743517.3bc76b",
+        "name": "txpasillo",
+        "topic": "cmnd/txpasillo/POWER2",
+        "qos": "",
+        "retain": "",
+        "broker": "50fb97c2.2235f8",
+        "x": 1760,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "a7ac2170.99f5f",
+        "type": "mqtt out",
+        "z": "8743517.3bc76b",
+        "name": "txcocina",
+        "topic": "cmnd/txpasillo/POWER1",
+        "qos": "",
+        "retain": "",
+        "broker": "50fb97c2.2235f8",
+        "x": 1760,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "ad265b1.169a7a8",
+        "type": "mqtt out",
+        "z": "8743517.3bc76b",
+        "name": "txcomedor",
+        "topic": "cmnd/txpasillo/POWER3",
+        "qos": "",
+        "retain": "",
+        "broker": "50fb97c2.2235f8",
+        "x": 1770,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "cbb08093.e9376",
+        "type": "debug",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 1750,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "99a86ea8.b1ed2",
+        "type": "mqtt out",
+        "z": "8743517.3bc76b",
+        "name": "sala",
+        "topic": "cmnd/sala/POWER",
+        "qos": "",
+        "retain": "",
+        "broker": "50fb97c2.2235f8",
+        "x": 1750,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "f01ce3d3.394d9",
+        "type": "debug",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 1370,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "f67da982.4fe018",
+        "type": "debug",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 1310,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "a4d004ee.41b1c8",
+        "type": "mqtt in",
+        "z": "8743517.3bc76b",
+        "name": "ZbPIRSala",
+        "topic": "tele/zigbeebridge1/PIRSALA/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 180,
+        "y": 880,
+        "wires": [
+            [
+                "31294396.ee4cac"
+            ]
+        ]
+    },
+    {
+        "id": "31294396.ee4cac",
+        "type": "json",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 410,
+        "y": 880,
+        "wires": [
+            [
+                "d72bd5f6.102f98"
+            ]
+        ]
+    },
+    {
+        "id": "d72bd5f6.102f98",
+        "type": "function",
+        "z": "8743517.3bc76b",
+        "name": "auto on on night",
+        "func": "var state =  msg.payload.ZbReceived.PIRSALA.Occupancy;\n\nvar now = new Date();\nvar h = now.getHours();\nvar validHours = h >= 19 || h <= 6;\n\nif (state == 1 && validHours){\n    return {payload:\"ON\"};\n}\n\nreturn {};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 880,
+        "wires": [
+            [
+                "b69c9505.169be8",
+                "bb2cb4ed.4550c8",
+                "cbca31fc.5e105"
+            ]
+        ]
+    },
+    {
+        "id": "2debfb4e.790804",
+        "type": "inject",
+        "z": "8743517.3bc76b",
+        "name": "test off",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "00 12 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"ZbReceived\":{\"PIRSALA\":{\"Occupancy\":0}}}",
+        "payloadType": "json",
+        "x": 420,
+        "y": 940,
+        "wires": [
+            [
+                "d72bd5f6.102f98"
+            ]
+        ]
+    },
+    {
+        "id": "b69c9505.169be8",
+        "type": "delay",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "3",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "outputs": 1,
+        "x": 820,
+        "y": 940,
+        "wires": [
+            [
+                "30d77f28.69b24"
+            ]
+        ]
+    },
+    {
+        "id": "30d77f28.69b24",
+        "type": "function",
+        "z": "8743517.3bc76b",
+        "name": "auto off on night",
+        "func": "if (msg.payload == \"ON\"){\n    return { payload: \"OFF\"}\n}\nreturn {};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 940,
+        "wires": [
+            [
+                "bb2cb4ed.4550c8"
+            ]
+        ]
+    },
+    {
+        "id": "bb2cb4ed.4550c8",
+        "type": "function",
+        "z": "8743517.3bc76b",
+        "name": "join",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1190,
+        "y": 880,
+        "wires": [
+            [
+                "f01ce3d3.394d9",
+                "ae526bd5.709548"
+            ]
+        ]
+    },
+    {
+        "id": "40d34d87.f5c214",
+        "type": "inject",
+        "z": "8743517.3bc76b",
+        "name": "test on",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "00 12 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"ZbReceived\":{\"PIRSALA\":{\"Occupancy\":1}}}",
+        "payloadType": "json",
+        "x": 420,
+        "y": 980,
+        "wires": [
+            [
+                "d72bd5f6.102f98"
+            ]
+        ]
+    },
+    {
+        "id": "10db3641.271dfa",
+        "type": "mqtt out",
+        "z": "8743517.3bc76b",
+        "name": "txlivingroom",
+        "topic": "cmnd/txpasillo/POWER3",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "50fb97c2.2235f8",
+        "x": 1770,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "ae526bd5.709548",
+        "type": "mqtt out",
+        "z": "8743517.3bc76b",
+        "name": "txbalcony",
+        "topic": "cmnd/txlivingroom/POWER1",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "50fb97c2.2235f8",
+        "x": 1760,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "9a397e49.c6bfe",
+        "type": "mqtt out",
+        "z": "8743517.3bc76b",
+        "name": "txbath",
+        "topic": "cmnd/txpasillo/POWER3",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "50fb97c2.2235f8",
+        "x": 1750,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "2325cb37.390204",
+        "type": "mqtt out",
+        "z": "8743517.3bc76b",
+        "name": "bed_lamp",
+        "topic": "zigbee2mqtt/bed_lamp/set",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "50fb97c2.2235f8",
+        "x": 1380,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "5aa332a7.a3122c",
+        "type": "change",
+        "z": "8743517.3bc76b",
+        "name": "TOGGLE",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "TOGGLE",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1180,
+        "y": 660,
+        "wires": [
+            [
+                "ae526bd5.709548"
+            ]
+        ]
+    },
+    {
+        "id": "76956222.d5f3fc",
+        "type": "change",
+        "z": "8743517.3bc76b",
+        "name": "OFF",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "OFF",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1170,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cbca31fc.5e105",
+        "type": "debug",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 810,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "4f08a49d.3c1f6c",
+        "type": "inject",
+        "z": "8743517.3bc76b",
+        "name": "test",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "Mensaje de prueba desde nodered ",
+        "payloadType": "str",
+        "x": 1350,
+        "y": 1400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c28ec5ab8349d2de",
+        "type": "mqtt in",
+        "z": "8743517.3bc76b",
+        "name": "blue_btn",
+        "topic": "zigbee2mqtt/blue_btn",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 580,
+        "y": 400,
+        "wires": [
+            [
+                "9f99bff80f623a0c"
+            ]
+        ]
+    },
+    {
+        "id": "aeb8bb88cc28b75e",
+        "type": "change",
+        "z": "8743517.3bc76b",
+        "name": "TOGGLE",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "TOGGLE",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1120,
+        "y": 340,
+        "wires": [
+            [
+                "2325cb37.390204",
+                "f67da982.4fe018"
+            ]
+        ]
+    },
+    {
+        "id": "1b7783626c799f5e",
+        "type": "mqtt out",
+        "z": "8743517.3bc76b",
+        "name": "room_lamp",
+        "topic": "zigbee2mqtt/room_lamp/set",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "50fb97c2.2235f8",
+        "x": 1370,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "9f99bff80f623a0c",
+        "type": "json",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 750,
+        "y": 400,
+        "wires": [
+            [
+                "358fe222.ad05be"
+            ]
+        ]
+    },
+    {
+        "id": "c2590fe05b936094",
+        "type": "json",
+        "z": "8743517.3bc76b",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 750,
+        "y": 520,
+        "wires": [
+            [
+                "513b82664307f678"
+            ]
+        ]
+    },
+    {
+        "id": "513b82664307f678",
+        "type": "switch",
+        "z": "8743517.3bc76b",
+        "name": "states",
+        "property": "payload.action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "single",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "long",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "double",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 910,
+        "y": 520,
+        "wires": [
+            [
+                "6914049af52be26e",
+                "f67da982.4fe018"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "6914049af52be26e",
+        "type": "change",
+        "z": "8743517.3bc76b",
+        "name": "TOGGLE",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "TOGGLE",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1120,
+        "y": 500,
+        "wires": [
+            [
+                "1b7783626c799f5e",
+                "f67da982.4fe018"
+            ]
+        ]
+    },
+    {
+        "id": "31b78696b89ca8c3",
+        "type": "mqtt in",
+        "z": "8743517.3bc76b",
+        "name": "yellow_btn",
+        "topic": "zigbee2mqtt/yellow_btn",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 580,
+        "y": 520,
+        "wires": [
+            [
+                "c2590fe05b936094"
+            ]
+        ]
+    },
+    {
+        "id": "59f3294e.052058",
+        "type": "mqtt in",
+        "z": "236bb3f3.497d5c",
+        "name": "S31HOMELAB",
+        "topic": "tele/pow/S31HOMELAB/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 500,
+        "y": 320,
+        "wires": [
+            [
+                "8905060b.477da8"
+            ]
+        ]
+    },
+    {
+        "id": "8905060b.477da8",
+        "type": "json",
+        "z": "236bb3f3.497d5c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 730,
+        "y": 420,
+        "wires": [
+            [
+                "4c525b90bc4be291"
+            ]
+        ]
+    },
+    {
+        "id": "0d563c4026780faa",
+        "type": "influxdb out",
+        "z": "236bb3f3.497d5c",
+        "influxdb": "417ca687.86f458",
+        "name": "",
+        "measurement": "pow",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "pow",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "jrb",
+        "bucket": "home",
+        "x": 1210,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "0aa1a5a1e13e38a1",
+        "type": "debug",
+        "z": "236bb3f3.497d5c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 1030,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "e00b6de182602379",
+        "type": "mqtt in",
+        "z": "236bb3f3.497d5c",
+        "name": "S31DESKTOP",
+        "topic": "tele/pow/S31DESKTOP/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 500,
+        "y": 240,
+        "wires": [
+            [
+                "8905060b.477da8"
+            ]
+        ]
+    },
+    {
+        "id": "4c525b90bc4be291",
+        "type": "function",
+        "z": "236bb3f3.497d5c",
+        "name": "",
+        "func": "var factor = msg.payload.ENERGY.Factor;\nvar voltaje = msg.payload.ENERGY.Voltage;\nvar power = msg.payload.ENERGY.Power;\nvar reactive_power = msg.payload.ENERGY.ReactivePower;\nvar apparent_power = msg.payload.ENERGY.ApparentPower;\nvar current = msg.payload.ENERGY.Current;\n\n\nvar name = msg.topic.split('/')[2];\n\n\nmsg.payload = [\n    { \n        factor: factor, \n        voltaje: voltaje,\n        power: power,\n        reactive_power: reactive_power,\n        apparent_power: apparent_power,\n        current: current\n    },  // fields\n    { device: name }                 // tags\n];\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 420,
+        "wires": [
+            [
+                "0d563c4026780faa"
+            ]
+        ]
+    },
+    {
+        "id": "5481252d88d16da8",
+        "type": "mqtt in",
+        "z": "236bb3f3.497d5c",
+        "name": "S31POT",
+        "topic": "tele/pow/S31POT/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 480,
+        "y": 280,
+        "wires": [
+            [
+                "8905060b.477da8"
+            ]
+        ]
+    },
+    {
+        "id": "597da3c5e95c2969",
+        "type": "mqtt in",
+        "z": "236bb3f3.497d5c",
+        "name": "S31MINIPC",
+        "topic": "tele/pow/S31MINIPC/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 490,
+        "y": 360,
+        "wires": [
+            [
+                "8905060b.477da8"
+            ]
+        ]
+    },
+    {
+        "id": "e49cfa6bb0fbb8df",
+        "type": "mqtt in",
+        "z": "236bb3f3.497d5c",
+        "name": "S31NAS",
+        "topic": "tele/pow/S31NAS/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 480,
+        "y": 440,
+        "wires": [
+            [
+                "8905060b.477da8"
+            ]
+        ]
+    },
+    {
+        "id": "6ba9bc908cccb5a2",
+        "type": "mqtt in",
+        "z": "236bb3f3.497d5c",
+        "name": "S31DESK",
+        "topic": "tele/pow/S31DESK/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 480,
+        "y": 400,
+        "wires": [
+            [
+                "8905060b.477da8"
+            ]
+        ]
+    },
+    {
+        "id": "be54939de3edf177",
+        "type": "mqtt in",
+        "z": "236bb3f3.497d5c",
+        "name": "S31SW25",
+        "topic": "tele/pow/S31SW25/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 480,
+        "y": 500,
+        "wires": [
+            [
+                "8905060b.477da8"
+            ]
+        ]
+    },
+    {
+        "id": "f82cca3c9c8651a0",
+        "type": "mqtt in",
+        "z": "236bb3f3.497d5c",
+        "name": "S31POT2",
+        "topic": "tele/pow/S31POT2/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 480,
+        "y": 540,
+        "wires": [
+            [
+                "8905060b.477da8"
+            ]
+        ]
+    },
+    {
+        "id": "1ad4b6a8e268a2b0",
+        "type": "mqtt in",
+        "z": "236bb3f3.497d5c",
+        "name": "S31AROMA",
+        "topic": "tele/pow/S31AROMA/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 490,
+        "y": 580,
+        "wires": [
+            [
+                "8905060b.477da8"
+            ]
+        ]
+    },
+    {
+        "id": "f1041cfac9efa559",
+        "type": "mqtt in",
+        "z": "236bb3f3.497d5c",
+        "name": "S31TV",
+        "topic": "tele/pow/S31TV/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 470,
+        "y": 620,
+        "wires": [
+            [
+                "8905060b.477da8"
+            ]
+        ]
+    },
+    {
+        "id": "05889a836a61bc9f",
+        "type": "mqtt in",
+        "z": "236bb3f3.497d5c",
+        "name": "S31ESPRESSO",
+        "topic": "tele/pow/S31ESPRESSO/SENSOR",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50fb97c2.2235f8",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 500,
+        "y": 660,
+        "wires": [
+            [
+                "8905060b.477da8"
+            ]
+        ]
+    }
+]
